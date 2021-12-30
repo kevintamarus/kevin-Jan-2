@@ -1,45 +1,73 @@
 import {getData} from 'helpers/sockets';
-import React, {FunctionComponent, useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {get} from 'helpers/util';
+import React, {FunctionComponent, useEffect, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import Text from 'shared/Text';
+import Colors from 'styles/Colors';
 
 const Main: FunctionComponent = () => {
+  const [bids, setBids] = useState(0);
+  const [asks, setAsks] = useState(0);
+
   useEffect(() => {
-    handleGetData();
+    // handleGetData();
   }, []);
 
-  const handleGetData = async () => {
+  const handleGetData = () => {
     const body = {
       event: 'subscribe',
       feed: 'book_ui_1',
       product_ids: ['PI_XBTUSD'],
     };
-    const data = getData(body);
-    console.log('data in main', data);
+    const callback = (data: object) => {
+      const newBids = get(data, 'bids.0.0', '0');
+      const newAsks = get(data, 'asks.0.0', '0');
+      setBids(newBids);
+      setAsks(newAsks);
+    };
+    getData(body, callback);
   };
 
   const renderRow = (item, i) => {
     return (
       <View style={styles.row} key={i}>
-        <Text>{item}</Text>
-        <Text>Data</Text>
+        <Text style={styles.text}>{item}</Text>
+        <Text>{asks}</Text>
       </View>
     );
   };
 
-  const data = ['Price', 'Size', 'Total'];
+  const data = ['PRICE', 'SIZE', 'TOTAL'];
+
   return (
     <View style={styles.container}>
-      {data.map((item, i) => {
-        // This will render a row for each data element.
-        return renderRow(item, i);
-      })}
+      <Text style={styles.title}>Order Book</Text>
+      <View style={styles.divider} />
+      <View style={styles.tableContainer}>
+        {data.map((item, i) => {
+          // This will render a row for each data element.
+          return renderRow(item, i);
+        })}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    flex: 1,
+    paddingVertical: 20,
+    backgroundColor: Colors.Black,
+  },
+  title: {
+    color: Colors.White,
+    marginVertical: 10,
+  },
+  divider: {
+    borderWidth: 1,
+    borderColor: Colors.Gray,
+  },
+  tableContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -47,6 +75,9 @@ const styles = StyleSheet.create({
   },
   row: {
     flex: 1,
+  },
+  text: {
+    color: Colors.Green,
   },
 });
 

@@ -1,6 +1,6 @@
 const defaultUrl = 'wss://www.cryptofacilities.com/ws/v1';
 
-export const getData = (body: object) => {
+export const getData = (body: object, callback) => {
   const socket = new WebSocket(defaultUrl);
   socket.onopen = () => {
     socket.send(JSON.stringify(body));
@@ -8,9 +8,9 @@ export const getData = (body: object) => {
 
   socket.onmessage = (e) => {
     // a message was received
-    console.log('data', e.data);
-    // return 'here you go';
-    // return e.data;
+    // console.log('data', e.data);
+    const data = JSON.parse(e.data);
+    return callback(data);
   };
 
   socket.onerror = (e) => {
