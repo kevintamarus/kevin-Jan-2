@@ -7,8 +7,8 @@ import Colors from 'styles/Colors';
 import Table from './components/Table';
 
 const Main: FunctionComponent = () => {
-  const [bids, setBids] = useState(0);
-  const [asks, setAsks] = useState(0);
+  const [bids, setBids] = useState('0');
+  const [asks, setAsks] = useState('0');
 
   useEffect(() => {
     // handleGetData();
@@ -21,21 +21,27 @@ const Main: FunctionComponent = () => {
       product_ids: ['PI_XBTUSD'],
     };
     const callback = (data: object) => {
-      const newBids = get(data, 'bids.0.0', 0);
-      const newAsks = get(data, 'asks.0.0', 0);
+      const newBids = get(data, 'bids.0.0', '0');
+      const newAsks = get(data, 'asks.0.0', '0');
       setBids(newBids);
       setAsks(newAsks);
     };
     getData(body, callback);
   };
 
-  const data = ['PRICE', 'SIZE', 'TOTAL'];
+  const headers = ['PRICE', 'SIZE', 'TOTAL'];
+  const mockData = [
+    [0, 0, 50],
+    [1, 1, 100],
+    [2, 2, 35],
+    [3, 3, 4],
+  ];
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Order Book</Text>
       <View style={styles.divider} />
-      <Table data={data} bids={bids} asks={asks} />
+      <Table headers={headers} data={mockData} bids={bids} asks={asks} />
     </View>
   );
 };
@@ -53,18 +59,6 @@ const styles = StyleSheet.create({
   divider: {
     borderWidth: 1,
     borderColor: Colors.Gray,
-  },
-  tableContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  row: {
-    flex: 1,
-  },
-  text: {
-    color: Colors.Green,
   },
 });
 
