@@ -6,12 +6,12 @@ import DepthGraph from './DepthGraph';
 
 export type Props = {
   headers: Array<string>;
-  data: Array<Array<string>>;
-  bids: string;
-  asks: string;
+  bids: Array<Array<number>>;
+  asks: Array<Array<number>>;
+  total: number;
 };
 
-const Table: React.FC<Props> = ({headers, data, bids, asks}) => {
+const Table: React.FC<Props> = ({headers, bids, asks, total}) => {
   const renderHeaders = (item: any, i: number) => {
     return (
       <View style={styles.headerContainer} key={`header${i}`}>
@@ -21,12 +21,13 @@ const Table: React.FC<Props> = ({headers, data, bids, asks}) => {
   };
 
   const renderRow = () => {
+    console.log('total', total, bids);
     return (
       <>
-        {data.map((item: any, i: number) => {
+        {bids.map((item: any, i: number) => {
           return (
             <View style={styles.row} key={`item${i}`}>
-              <DepthGraph percent={item[2]} color="red" />
+              <DepthGraph percent={(item[2] / total) * 100} color="red" />
               <View style={styles.rowStyle}>
                 <View style={styles.rowTextContainer}>
                   <Text style={[styles.rowText, styles.redText]}>
@@ -37,17 +38,17 @@ const Table: React.FC<Props> = ({headers, data, bids, asks}) => {
                   <Text style={styles.rowText}>{item[1]}</Text>
                 </View>
                 <View style={styles.rowTextContainer}>
-                  <Text style={styles.rowText}>none so far</Text>
+                  <Text style={styles.rowText}>{item[2]}</Text>
                 </View>
               </View>
             </View>
           );
         })}
         <Text style={styles.spreadText}>Spread: 13.0 (0.04%)</Text>
-        {data.map((item: any, i: number) => {
+        {asks.map((item: any, i: number) => {
           return (
             <View style={styles.row} key={`item${i}`}>
-              <DepthGraph percent={item[2]} color="green" />
+              <DepthGraph percent={(item[2] / total) * 100} color="green" />
               <View style={styles.rowStyle}>
                 <View style={styles.rowTextContainer}>
                   <Text style={[styles.rowText, styles.greenText]}>
@@ -58,7 +59,7 @@ const Table: React.FC<Props> = ({headers, data, bids, asks}) => {
                   <Text style={styles.rowText}>{item[1]}</Text>
                 </View>
                 <View style={styles.rowTextContainer}>
-                  <Text style={styles.rowText}>none so far</Text>
+                  <Text style={styles.rowText}>{item[2]}</Text>
                 </View>
               </View>
             </View>

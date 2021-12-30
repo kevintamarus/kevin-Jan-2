@@ -11,8 +11,9 @@ import Table from './components/Table';
 const Main: FunctionComponent = () => {
   const appState = useRef(AppState.currentState);
   const [currentProduct, setCurrentProduct] = useState(product.XBT);
-  const [bids, setBids] = useState('0');
-  const [asks, setAsks] = useState('0');
+  const [bids, setBids] = useState([]);
+  const [asks, setAsks] = useState([]);
+  const [highestTotal, setHighestTotal] = useState(0);
 
   useEffect(() => {
     const subscription = AppState.addEventListener(
@@ -32,20 +33,67 @@ const Main: FunctionComponent = () => {
     );
 
     return () => {
-      subscription.remove();
+      if (subscription) {
+        subscription.remove();
+      }
     };
   }, []);
 
+  // using count right now so I can view the results for now
+  let count = 0;
+
   const handleGetData = (product: string) => {
     const callback = (data: object) => {
-      const newBids = get(data, 'bids.0.0', '0');
-      const newAsks = get(data, 'asks.0.0', '0');
-      console.log('data returned', data);
-      setBids(newBids);
-      setAsks(newAsks);
+      if (count !== 50) {
+        count++;
+      } else {
+        //this needs to be fixed, totals is incorrect for bids
+        const newBids = sortResults(
+          mapTotals(filterResults(get(data, 'bids', []))),
+          'desc',
+        );
+        const newAsks = mapTotals(
+          sortResults(filterResults(get(data, 'asks', [])), 'asc'),
+        );
+        console.log('asks', newAsks);
+        console.log('totals', mapTotals(newAsks));
+        setBids(newBids);
+        setAsks(newAsks);
+        setHighestTotal(calculateHighestTotal(newBids, newAsks));
+
+        count = 0;
+        console.log('counting', count);
+      }
     };
     unsubscribe();
     getData(product, callback);
+  };
+
+  const filterResults = (items: Array<Array<number>>) =>
+    items.filter((item: Array<number>) => item[1] !== 0);
+
+  const mapTotals = (items: Array<Array<number>>) => {
+    let total = 0;
+    return items.map((item: Array<number>) => {
+      total = total + item[1];
+      item.push(total);
+      return item;
+    });
+  };
+
+  const sortResults = (items: Array<Array<number>>, order: string) =>
+    items.sort((a: Array<number>, b: Array<number>) => {
+      return order === 'asc' ? a[1] - b[1] : b[1] - a[1];
+    });
+
+  const calculateHighestTotal = (
+    bids: Array<Array<number>>,
+    asks: Array<Array<number>>,
+  ) => {
+    return Math.max(
+      bids.length ? bids[0][2] : 0,
+      asks.length ? asks[asks.length - 1][2] : 0,
+    );
   };
 
   const handleTogglePress = () => {
@@ -59,24 +107,19 @@ const Main: FunctionComponent = () => {
   };
 
   const headers = ['PRICE', 'SIZE', 'TOTAL'];
-  const mockData = [
-    ['30,000.30', '0', '50'],
-    ['30,000.30', '1', '100'],
-    ['300.30', '2', '35'],
-    ['300.30', '3', '4'],
-  ];
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Order Book</Text>
       <View style={styles.tableContainer}>
-        <Table headers={headers} data={mockData} bids={bids} asks={asks} />
+        <Table headers={headers} bids={bids} asks={asks} total={highestTotal} />
       </View>
       <Button
         style={styles.button}
         title="Toggle Feed"
         onPress={handleTogglePress}
       />
+      <Button style={styles.button} title="Stop" onPress={unsubscribe} />
     </View>
   );
 };
