@@ -1,20 +1,39 @@
 import {product} from 'consts/product';
 import {getData, unsubscribe} from 'helpers/sockets';
 import {get} from 'helpers/util';
-import React, {FunctionComponent, useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, {FunctionComponent, useEffect, useRef, useState} from 'react';
+import {AppState, StyleSheet, View} from 'react-native';
 import Button from 'shared/Button';
 import Text from 'shared/Text';
 import Colors from 'styles/Colors';
 import Table from './components/Table';
 
 const Main: FunctionComponent = () => {
+  const appState = useRef(AppState.currentState);
   const [currentProduct, setCurrentProduct] = useState(product.XBT);
   const [bids, setBids] = useState('0');
   const [asks, setAsks] = useState('0');
 
   useEffect(() => {
-    // handleGetData();
+    const subscription = AppState.addEventListener(
+      'change',
+      (nextAppState: any) => {
+        if (appState.current === 'inactive') {
+          // unsubscribe();
+        }
+        if (
+          appState.current.match(/inactive|background/) &&
+          nextAppState === 'active'
+        ) {
+          // handleGetData(currentProduct);
+        }
+        appState.current = nextAppState;
+      },
+    );
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   const handleGetData = (product: string) => {
