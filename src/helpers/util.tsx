@@ -1,5 +1,5 @@
-export const get = (obj, path, defaultValue) => {
-  const travel = (regexp) =>
+export const get = (obj: any, path: any, defaultValue: any) => {
+  const travel = (regexp: any) =>
     String.prototype.split
       .call(path, regexp)
       .filter(Boolean)

@@ -3,7 +3,7 @@ import {StyleSheet, Text as RNText} from 'react-native';
 import Colors from 'styles/Colors';
 
 export type Props = {
-  style: string;
+  style: object;
   children: string;
 };
 
