@@ -2,6 +2,7 @@ import {getData} from 'helpers/sockets';
 import {get} from 'helpers/util';
 import React, {FunctionComponent, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
+import Button from 'shared/Button';
 import Text from 'shared/Text';
 import Colors from 'styles/Colors';
 import Table from './components/Table';
@@ -31,17 +32,19 @@ const Main: FunctionComponent = () => {
 
   const headers = ['PRICE', 'SIZE', 'TOTAL'];
   const mockData = [
-    [0, 0, 50],
-    [1, 1, 100],
-    [2, 2, 35],
-    [3, 3, 4],
+    ['30,000.30', '0', '50'],
+    ['30,0000.30', '1', '100'],
+    ['300.30', '2', '35'],
+    ['300.30', '3', '4'],
   ];
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Order Book</Text>
-      <View style={styles.divider} />
-      <Table headers={headers} data={mockData} bids={bids} asks={asks} />
+      <View style={styles.tableContainer}>
+        <Table headers={headers} data={mockData} bids={bids} asks={asks} />
+      </View>
+      <Button style={styles.button} title="Toggle Feed" onPress={() => {}} />
     </View>
   );
 };
@@ -53,12 +56,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.Black,
   },
   title: {
+    fontSize: 16,
+    fontWeight: 'bold',
     color: Colors.White,
-    marginVertical: 10,
+    margin: 10,
   },
-  divider: {
-    borderWidth: 1,
-    borderColor: Colors.Gray,
+  tableContainer: {
+    flex: 1,
+  },
+  button: {
+    flex: 0,
+    marginVertical: 20,
+    alignSelf: 'center',
   },
 });
 
