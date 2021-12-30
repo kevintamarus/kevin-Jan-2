@@ -14,7 +14,7 @@ export type Props = {
 const Table: React.FC<Props> = ({headers, data, bids, asks}) => {
   const renderHeaders = (item: any, i: number) => {
     return (
-      <View style={styles.headerContainer} key={i}>
+      <View style={styles.headerContainer} key={`header${i}`}>
         <Text style={styles.title}>{item}</Text>
       </View>
     );
@@ -25,7 +25,7 @@ const Table: React.FC<Props> = ({headers, data, bids, asks}) => {
       <>
         {data.map((item: any, i: number) => {
           return (
-            <View style={styles.row}>
+            <View style={styles.row} key={`item${i}`}>
               <DepthGraph percent={item[2]} color="red" />
               <View style={styles.rowStyle}>
                 <View style={styles.rowTextContainer}>
@@ -46,7 +46,7 @@ const Table: React.FC<Props> = ({headers, data, bids, asks}) => {
         <Text style={styles.spreadText}>Spread: 13.0 (0.04%)</Text>
         {data.map((item: any, i: number) => {
           return (
-            <View style={styles.row}>
+            <View style={styles.row} key={`item${i}`}>
               <DepthGraph percent={item[2]} color="green" />
               <View style={styles.rowStyle}>
                 <View style={styles.rowTextContainer}>

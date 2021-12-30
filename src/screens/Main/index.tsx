@@ -1,4 +1,5 @@
-import {getData} from 'helpers/sockets';
+import {product} from 'consts/product';
+import {getData, unsubscribe} from 'helpers/sockets';
 import {get} from 'helpers/util';
 import React, {FunctionComponent, useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
@@ -8,6 +9,7 @@ import Colors from 'styles/Colors';
 import Table from './components/Table';
 
 const Main: FunctionComponent = () => {
+  const [currentProduct, setCurrentProduct] = useState(product.XBT);
   const [bids, setBids] = useState('0');
   const [asks, setAsks] = useState('0');
 
@@ -15,25 +17,32 @@ const Main: FunctionComponent = () => {
     // handleGetData();
   }, []);
 
-  const handleGetData = () => {
-    const body = {
-      event: 'subscribe',
-      feed: 'book_ui_1',
-      product_ids: ['PI_XBTUSD'],
-    };
+  const handleGetData = (product: string) => {
     const callback = (data: object) => {
       const newBids = get(data, 'bids.0.0', '0');
       const newAsks = get(data, 'asks.0.0', '0');
+      console.log('data returned', data);
       setBids(newBids);
       setAsks(newAsks);
     };
-    getData(body, callback);
+    unsubscribe();
+    getData(product, callback);
+  };
+
+  const handleTogglePress = () => {
+    if (currentProduct === product.XBT) {
+      handleGetData(product.ETH);
+      setCurrentProduct(product.ETH);
+    } else {
+      handleGetData(product.XBT);
+      setCurrentProduct(product.XBT);
+    }
   };
 
   const headers = ['PRICE', 'SIZE', 'TOTAL'];
   const mockData = [
     ['30,000.30', '0', '50'],
-    ['30,0000.30', '1', '100'],
+    ['30,000.30', '1', '100'],
     ['300.30', '2', '35'],
     ['300.30', '3', '4'],
   ];
@@ -44,7 +53,11 @@ const Main: FunctionComponent = () => {
       <View style={styles.tableContainer}>
         <Table headers={headers} data={mockData} bids={bids} asks={asks} />
       </View>
-      <Button style={styles.button} title="Toggle Feed" onPress={() => {}} />
+      <Button
+        style={styles.button}
+        title="Toggle Feed"
+        onPress={handleTogglePress}
+      />
     </View>
   );
 };

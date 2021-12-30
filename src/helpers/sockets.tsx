@@ -1,21 +1,35 @@
 const defaultUrl = 'wss://www.cryptofacilities.com/ws/v1';
 
-export const getData = (body: object, callback: any) => {
-  const socket = new WebSocket(defaultUrl);
+let socket: any;
+
+export const getData = (product: string, callback: any) => {
+  socket = new WebSocket(defaultUrl);
+  console.log('getting data');
+  const body = {
+    event: 'subscribe',
+    feed: 'book_ui_1',
+    product_ids: [product],
+  };
+
   socket.onopen = () => {
     socket.send(JSON.stringify(body));
   };
 
-  socket.onmessage = (e) => {
-    // a message was received
-    // console.log('data', e.data);
+  socket.onmessage = (e: any) => {
     const data = JSON.parse(e.data);
     return callback(data);
   };
 
-  socket.onerror = (e) => {
+  socket.onerror = (e: any) => {
     // an error occurred
     console.log('error', e);
     return 'error';
   };
+};
+
+export const unsubscribe = () => {
+  console.log('unsubscribing');
+  if (socket) {
+    socket.close();
+  }
 };
