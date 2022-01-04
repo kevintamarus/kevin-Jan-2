@@ -1,3 +1,6 @@
+<img width="450" alt="Screen Shot 2022-01-03 at 11 42 52 PM" src="https://user-images.githubusercontent.com/22313410/148026908-fe05a66a-e3a5-4759-8191-08e8a07476ce.png">
+
+
 ### Notes and Progress:
 
 - I used React Native cli on IOS only
