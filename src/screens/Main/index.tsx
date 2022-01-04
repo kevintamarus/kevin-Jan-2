@@ -16,17 +16,18 @@ const Main: FunctionComponent = () => {
   const [highestTotal, setHighestTotal] = useState(0);
 
   useEffect(() => {
+    handleGetData(currentProduct);
     const subscription = AppState.addEventListener(
       'change',
       (nextAppState: any) => {
         if (appState.current === 'inactive') {
-          // unsubscribe();
+          unsubscribe();
         }
         if (
           appState.current.match(/inactive|background/) &&
           nextAppState === 'active'
         ) {
-          // handleGetData(currentProduct);
+          handleGetData(currentProduct);
         }
         appState.current = nextAppState;
       },
@@ -40,8 +41,13 @@ const Main: FunctionComponent = () => {
   }, []);
 
   const handleGetData = (product: string) => {
+    let count = 0;
     const callback = (data: object) => {
-      compareAndUpdateList(data);
+      if (count === 50) {
+        compareAndUpdateList(data);
+        count = 0;
+      }
+      count++;
     };
     unsubscribe();
     getData(product, callback);
@@ -83,8 +89,6 @@ const Main: FunctionComponent = () => {
     const newAsks = mapTotals(
       sortResults(filterResults(get(data, 'asks', [])), 'asc'),
     );
-    console.log('asks and bids', newAsks, newBids);
-    console.log('totals', mapTotals(newAsks));
     if (newBids.length) {
       setBids(newBids);
     }
@@ -117,7 +121,6 @@ const Main: FunctionComponent = () => {
         title="Toggle Feed"
         onPress={handleTogglePress}
       />
-      <Button style={styles.button} title="Stop" onPress={unsubscribe} />
     </View>
   );
 };

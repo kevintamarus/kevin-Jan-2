@@ -21,7 +21,6 @@ const Table: React.FC<Props> = ({headers, bids, asks, total}) => {
   };
 
   const renderRow = () => {
-    console.log('total', total, bids);
     return (
       <>
         {bids.map((item: any, i: number) => {

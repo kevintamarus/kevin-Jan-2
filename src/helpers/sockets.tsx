@@ -4,7 +4,6 @@ let socket: any;
 
 export const getData = (product: string, callback: Function) => {
   socket = new WebSocket(defaultUrl);
-  console.log('getting data');
   const body = {
     event: 'subscribe',
     feed: 'book_ui_1',
@@ -22,13 +21,11 @@ export const getData = (product: string, callback: Function) => {
 
   socket.onerror = (e: any) => {
     // an error occurred
-    console.log('error', e);
     return 'error';
   };
 };
 
 export const unsubscribe = () => {
-  console.log('unsubscribing');
   if (socket) {
     socket.close();
   }
