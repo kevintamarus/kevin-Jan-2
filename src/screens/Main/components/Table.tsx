@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import Text from 'shared/Text';
 import Colors from 'styles/Colors';
 import DepthGraph from './DepthGraph';
@@ -31,7 +31,7 @@ const Table: React.FC<Props> = ({headers, bids, asks, total}) => {
               <View style={styles.rowStyle}>
                 <View style={styles.rowTextContainer}>
                   <Text style={[styles.rowText, styles.redText]}>
-                    {item[0]}
+                    {item[0].toFixed(2)}
                   </Text>
                 </View>
                 <View style={styles.rowTextContainer}>
@@ -52,7 +52,7 @@ const Table: React.FC<Props> = ({headers, bids, asks, total}) => {
               <View style={styles.rowStyle}>
                 <View style={styles.rowTextContainer}>
                   <Text style={[styles.rowText, styles.greenText]}>
-                    {item[0]}
+                    {item[0].toFixed(2)}
                   </Text>
                 </View>
                 <View style={styles.rowTextContainer}>
@@ -79,7 +79,9 @@ const Table: React.FC<Props> = ({headers, bids, asks, total}) => {
         })}
       </View>
       <View style={styles.divider} />
-      {renderRow()}
+      <ScrollView contentContainerStyle={styles.rowContainer}>
+        {renderRow()}
+      </ScrollView>
     </View>
   );
 };
@@ -88,7 +90,9 @@ const tableRowPadding = 5;
 const tableRowRightPadding = 30;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+  },
   divider: {
     borderWidth: 0.5,
     borderColor: Colors.Gray,
@@ -111,6 +115,9 @@ const styles = StyleSheet.create({
   title: {
     alignSelf: 'flex-end',
     color: Colors.Gray,
+  },
+  rowContainer: {
+    flexGrow: 1,
   },
   rowTextContainer: {
     flex: 1,

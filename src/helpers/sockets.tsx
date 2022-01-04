@@ -2,7 +2,7 @@ const defaultUrl = 'wss://www.cryptofacilities.com/ws/v1';
 
 let socket: any;
 
-export const getData = (product: string, callback: any) => {
+export const getData = (product: string, callback: Function) => {
   socket = new WebSocket(defaultUrl);
   console.log('getting data');
   const body = {

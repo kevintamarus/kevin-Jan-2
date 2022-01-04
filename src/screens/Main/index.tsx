@@ -39,31 +39,9 @@ const Main: FunctionComponent = () => {
     };
   }, []);
 
-  // using count right now so I can view the results for now
-  let count = 0;
-
   const handleGetData = (product: string) => {
     const callback = (data: object) => {
-      if (count !== 50) {
-        count++;
-      } else {
-        //this needs to be fixed, totals is incorrect for bids
-        const newBids = sortResults(
-          mapTotals(filterResults(get(data, 'bids', []))),
-          'desc',
-        );
-        const newAsks = mapTotals(
-          sortResults(filterResults(get(data, 'asks', [])), 'asc'),
-        );
-        console.log('asks', newAsks);
-        console.log('totals', mapTotals(newAsks));
-        setBids(newBids);
-        setAsks(newAsks);
-        setHighestTotal(calculateHighestTotal(newBids, newAsks));
-
-        count = 0;
-        console.log('counting', count);
-      }
+      compareAndUpdateList(data);
     };
     unsubscribe();
     getData(product, callback);
@@ -94,6 +72,26 @@ const Main: FunctionComponent = () => {
       bids.length ? bids[0][2] : 0,
       asks.length ? asks[asks.length - 1][2] : 0,
     );
+  };
+
+  const compareAndUpdateList = (data: object) => {
+    //this needs to be fixed, totals is incorrect for bids
+    const newBids = sortResults(
+      mapTotals(filterResults(get(data, 'bids', []))),
+      'desc',
+    );
+    const newAsks = mapTotals(
+      sortResults(filterResults(get(data, 'asks', [])), 'asc'),
+    );
+    console.log('asks and bids', newAsks, newBids);
+    console.log('totals', mapTotals(newAsks));
+    if (newBids.length) {
+      setBids(newBids);
+    }
+    if (newAsks.length) {
+      setAsks(newAsks);
+    }
+    setHighestTotal(calculateHighestTotal(newBids, newAsks));
   };
 
   const handleTogglePress = () => {
